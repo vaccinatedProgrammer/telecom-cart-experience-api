@@ -5,6 +5,7 @@ import {
   GetCartResponse,
 } from '../types/cart.types';
 import { CartError, ErrorCode, ErrorStatusMap } from '../types/error.types';
+import { error as logError } from '../utils/logger';
 
 /**
  * Cart routes per SPEC-B
@@ -111,12 +112,24 @@ export function createCartRoutes(cartService: CartService): Router {
  */
 function handleError(error: unknown, res: Response): Response {
   if (error instanceof CartError) {
+    // Enhanced logging for context-related failures
+    if (error.code === ErrorCode.CONTEXT_NOT_FOUND || error.code === ErrorCode.CONTEXT_EXPIRED) {
+      const contextId = error.details.contextId;
+      const cartId = error.details.cartId;
+      const logDetails = cartId
+        ? `contextId=${contextId}, cartId=${cartId}`
+        : `contextId=${contextId}`;
+      logError(`CartError [${error.code}]: ${error.message} (${logDetails})`);
+    } else {
+      logError(`CartError [${error.code}]: ${error.message}`);
+    }
+
     const statusCode = ErrorStatusMap[error.code];
     return res.status(statusCode).json(error.toResponse());
   }
 
   // Unexpected errors default to 500
-  console.error('Unexpected error:', error);
+  logError(`Unexpected error: ${error}`);
   return res.status(500).json({
     error: {
       code: 'INTERNAL_ERROR',

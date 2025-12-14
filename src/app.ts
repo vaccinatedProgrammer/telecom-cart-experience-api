@@ -3,11 +3,18 @@ import { createCartRoutes } from './routes/cart.routes';
 import { CartService } from './services/cart.service';
 import { SalesforceCartClientMock } from './clients/salesforce-cart-client.mock';
 import { InMemoryContextStore } from './stores/context.store';
+import { info } from './utils/logger';
 
 const app = express();
 
 // JSON middleware
 app.use(express.json());
+
+// Request logging middleware
+app.use((req, _res, next) => {
+  info(`${req.method} ${req.path}`);
+  next();
+});
 
 // Initialize dependencies
 const upstreamClient = new SalesforceCartClientMock();
