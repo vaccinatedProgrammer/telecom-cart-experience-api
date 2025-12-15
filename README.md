@@ -48,10 +48,16 @@ Returns:
 }
 ```
 
+**Postman Screenshot**
+![Alt text](image.png)
+
 **Fetch the cart:**
 ```bash
 curl http://localhost:3000/api/cart/carts/ctx-1
 ```
+
+**Postman Screenshot**
+![Alt text](image-1.png)
 
 **What errors look like:**
 - 400 when required fields are missing
@@ -59,6 +65,9 @@ curl http://localhost:3000/api/cart/carts/ctx-1
 - 410 when context expired
 
 All errors return `{"error": {"code": "...", "message": "...", "details": {...}}}`
+
+**Postman Screenshot**
+![Alt text](image-2.png)
 
 ## Tests
 
